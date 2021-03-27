@@ -11,7 +11,7 @@ class Utils:
 		self.out_f = 'output.txt'
 
 	def load_input(self, input_f):
-		with open(input_f, 'r', encoding='utf-8-sig') as f:
+		with open(input_f, 'r') as f:
 			self.data = [item.strip() for item in f.readlines()]
 
 	def load_article_6(self):
