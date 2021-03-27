@@ -47,32 +47,65 @@ class Utils:
 		
 
 		ans = []
-		temp_body = []
+		temp = []
 
-		def add_to_ans(a1, a2, ans):
-			if len(temp_body)>0:
-				a1[0]['text'] = '<{}>{}'.format(a1[0]['tag'], a1[0]['text']) 
-				a1[-1]['text'] = '{}</{}>'.format(a1[-1]['text'], a1[-1]['tag'])
-				ans+=[item['text'] for item in a1]
-			if a2:
-				a2['text'] = '<{}>{}</{}>'.format(a2['tag'], a2['text'], a2['tag'])
-				ans.append(a2['text'])
+		def add_temp(temp_list, ans):
+			a= {'list':[],'tag':'none'}
+			i=0
+			for item in temp_list:
+				if item['text'] == '':
+					a['list'].append(item['text'])
+					i+=1
+				else:
+					break
+			if len(a['list'])>0:
+				ans.append(a)
+			a= {'list':[],'tag':'none'}
+			j=len(temp_list)
+			for item in temp_list[::-1]:
+				if item['text'] == '':
+					a['list'].append(item['text'])
+					j-=1
+				else:
+					break
+			b= {'list':[],'tag':'body'}
+			for ind in range(i, j):
+				b['list'].append(temp_list[ind]['text'])
+
+			if len(b['list'])>0:
+				ans.append(b)
+
+			if len(a['list'])>0:
+				ans.append(a)
 			return ans
-		
+			
+
 		for i in range(len(data)):
 			item = data[i]
 			text, tag = item['text'], item['tag']
 
 			if not tag == 'body':
-				ans = add_to_ans(temp_body, item, ans)
-				temp_body = []
-			elif not text == '':
-				temp_body.append(item)
+				ans = add_temp(temp, ans)
+				temp = []
+				ans.append({
+					'list':[text],
+					'tag':tag
+				})
+			else:
+				temp.append(item)
+		
+		ans = add_temp(temp, ans)
 
-		ans = add_to_ans(temp_body, None, ans)
+		res = []
+		for item in ans:				
+			if not item['tag']=='none':
+				item['list'][0] = '<{}>{}'.format(item['tag'], item['list'][0])
+				item['list'][-1] = '{}</{}>'.format(item['list'][-1], item['tag'])
+
+			res+=[e for e in item['list']]
 
 		with open(self.out_f, 'w') as f:
-			f.write('\n'.join(ans))
+			f.write('\n'.join(res))
 				
 
 
