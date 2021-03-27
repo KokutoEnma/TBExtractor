@@ -53,21 +53,23 @@ class Utils:
 			if len(temp_body)>0:
 				a1[0]['text'] = '<{}>{}'.format(a1[0]['tag'], a1[0]['text']) 
 				a1[-1]['text'] = '{}</{}>'.format(a1[-1]['text'], a1[-1]['tag'])
-			a2['text'] = '<{}>{}</{}>'.format(a2['tag'], a2['text'], a2['tag'])
-			ans+=[item['text'] for item in a1]
-			ans.append(a2['text'])
+				ans+=[item['text'] for item in a1]
+			if a2:
+				a2['text'] = '<{}>{}</{}>'.format(a2['tag'], a2['text'], a2['tag'])
+				ans.append(a2['text'])
 			return ans
 		
 		for i in range(len(data)):
 			item = data[i]
-			prev = data[i-1] if not i==0 else None
 			text, tag = item['text'], item['tag']
 
 			if not tag == 'body':
 				ans = add_to_ans(temp_body, item, ans)
 				temp_body = []
-			else:
+			elif not text == '':
 				temp_body.append(item)
+
+		ans = add_to_ans(temp_body, None, ans)
 
 		with open(self.out_f, 'w') as f:
 			f.write('\n'.join(ans))

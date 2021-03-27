@@ -58,6 +58,6 @@ class App:
 
 
 if __name__ == '__main__':
-	mode = None if len(sys.argv)==1 or eval(sys.argv[1]) not in inputs else sys.argv[1]
+	mode = None if len(sys.argv)==1 or eval(sys.argv[1]) not in inputs else eval(sys.argv[1])
 	app = App(mode)
 	app.run()
